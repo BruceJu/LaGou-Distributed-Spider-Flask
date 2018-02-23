@@ -143,7 +143,7 @@ if __name__ == '__main__':
 > 为了能在cmd/shell中控制WebServer和Spider，需要设计几个操作命令，使用的是`flask_script`
  * 提供以下几个命令
    * db init (数据库初始化)
-   * db add admin -a <帐户名> - p <密码> 
+   * create_admin -a <帐户名> - p <密码> 
        * 用于向数据库种添加Admin，用于登录WebServer
        * 需要使用者 在命令行中进行输入，并加密储存
    * runserver -host <帐户名> -port <密码> (启动WebServer)
@@ -151,6 +151,7 @@ if __name__ == '__main__':
        * 默认是在 host=127.0.0.1 port = 5000 下运行
    * runspider -debug <是否是调试模式> (启动Spider)
        * 模式模式下，会自动将爬取的数据输出到 data.json文件中 
+   * drop_all_db 重置数据库，进行信息提示，需要用户输入确认信息才能执行。    
        
  * 由于进行到此时，还没有进行db相关操作，所有先实现  `runserver`和 `runspider`的俩个部分的逻辑，
  * 这里要注意项目的目录结构，否则会出现问题，可以参考d代码中的目录结构
@@ -183,6 +184,174 @@ def runspider(debug):
 if __name__ == '__main__':
     manager.run()
 ```
+
+### 创建数据库模块
+> 思考过后，决定使用MySQL了，那么现在需要创建一个数据库和一个管理员的表，这里使用的是
+``flask_sqlalchemy`` 进行数据库关系的映射
+  * 使用`flask_sqlalchemy`连接MySQL数据库模块
+  * 创建Admin的class进行管理员的数据模表的映射
+  
+* 使用 `flask_sqlalchemy` 连接数据库，这里为了避免循环引用的问题
+* 创建了一个类`exts.py`来进行间接引用,然后在WebServer中进行初始化
+
+```python
+ # coding:utf8
+'''
+exts.py类
+'''
+
+from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy()
+```
+```python 
+# coding:utf8
+
+'''
+WebServer.py类
+'''
+
+from flask import Flask
+import WebConfig
+from exts import db
+
+app = Flask(__name__)
+app.config.from_object(WebConfig)
+db.init_app(app)
+
+```
+* 创建管理员的数据模型 创建一个 `model.py`来存放所有的数据表模型,应该存在以下字段
+  * 表名 `admin`
+  * id 整形，主键，自增长
+  * account 字符串，不重复
+  * pwd 字符串，不重复，需要加密
+  * addtime 时间类型，自动获取
+  * 封装 ``save()``操作
+  
+```python
+# coding:utf8
+
+'''
+model.py类
+'''
+
+from datetime import datetime
+from werkzeug.security import generate_password_hash
+from exts import db
+
+
+# 管理员
+class Admin(db.Model):
+
+    __tablename__ = 'admin'
+ 
+    def __init__(self, account, password):
+        self.account = account
+        self.pwd = generate_password_hash(password)
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def __repr__(self):
+        return '<Admin %r>' % self.account
+
+   
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    account = db.Column(db.String(100), unique=True)
+    pwd = db.Column(db.String(100), unique=True)
+    addtime = db.Column(db.DateTime, index=True, default=datetime.now())
+```  
+
+### 生成数据库
+> 这里本来可以使用 `db.create_all()`来进行数据库的同步，但是这样不利于数据库的升级和迁移操作
+所以为了一劳永逸，还是使用 ``flask_migrate`` 来进行数据库的映射和修改，迁移操作。
+
+* 初始化 ``flask_migrate``
+* 导入数据模型的类
+* 运行python Manager.py db init 进行数据库的初始化
+* 再运行python Manager.py db migrate 进行数据库的迁移
+* 运行python Manager.py db upgrade 进行数据库的更新
+* 成功后目前下会有一个 `migrations`的目录
+* 这个是记录迁移数据库的版本西信息的不要删除，如下图
+* 数据库中应该有俩个表，如下图
+<div class="div-border-image">
+![001](https://thumbnail0.baidupcs.com/thumbnail/ab3a0cdb0e98edfe13edafc133ba6bcd?fid=3180846231-250528-830986105675917&time=1519376400&rt=sh&sign=FDTAER-DCb740ccc5511e5e8fedcff06b081203-bZSIo57KKQvX%2BlGtiFemX49nDxg%3D&expires=8h&chkv=0&chkbd=0&chkpc=&dp-logid=1246468171419657629&dp-callid=0&size=c710_u400&quality=100)
+</div>
+* 部分代码如下
+
+```python
+
+# coding:utf8
+'''
+ WebServer.py 类
+'''
+
+from flask import Flask
+import WebConfig
+from exts import db
+from flask_migrate import Migrate
+from model import Admin
+
+
+app = Flask(__name__)
+app.config.from_object(WebConfig)
+db.init_app(app)
+migrate = Migrate(app=app,db=db)
+```
+```python
+# coding:utf8
+'''
+ Manager.py 类
+'''
+from LaGouSpiderProject.WebServer.WebServer import app
+from LaGouSpiderProject.WebServer.model import Admin
+
+manager = Manager(app=app)
+manager.add_command('db', MigrateCommand)
+
+```
+### 注意
+<div class="div-border-question">
+<p style="color:red;font-size:7">注意</p>
+ * 我在进行数据库的`init`命令时，我之前这个数据库中的所有数据表都被删除了
+ * 好在我这里的数据不是很多
+ * 所以在使用`db init`命令时，要保证数据库是空的
+</div>
+
+### 提供管理员添加命令
+> 现在数据库有了，那么就可以针对admin表进行cmd命令的设计了,代码如下
+
+```python
+'''
+Manager.py
+'''
+@manager.option('-a', '--account', dest='account', help='admin login account')
+@manager.option('-p', '--pwd', dest='pwd', help='admin login password')
+def create_admin(account, pwd):
+    admin = Admin(account=account, password=pwd)
+    admin.save()
+
+    admin_count = Admin.query.filter_by(account=account).count()
+    if admin_count > 0:
+        print('create admin success')
+    else:
+        print('create admin failed')
+```
+* 效果如下
+
+<div class="div-border-image">
+![avatar](https://thumbnail0.baidupcs.com/thumbnail/1583eaf9cd2b888a8c904d4f32b0e255?fid=3180846231-250528-546478717734915&time=1519390800&rt=sh&sign=FDTAER-DCb740ccc5511e5e8fedcff06b081203-Zlr4y2BsTIl8frUCOt0bQWnNdiA%3D&expires=8h&chkv=0&chkbd=0&chkpc=&dp-logid=1250189040838882703&dp-callid=0&size=c710_u400&quality=100)
+</div>
+ 
+
+
+
+
+
+
+
+
    
     
    
