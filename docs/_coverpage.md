@@ -8,5 +8,5 @@
 * 技术关系词，Scrapy,Redis,Flask,flask_script,flask_sqlalchemy,MySQL
 
 [GitHub](https://github.com/BruceJu/LaGou-Distributed-Spider-Flask/)
-[Get Started](/#项目概述)
+[Get Started](/#LaGou-Distributed-Spider-Flask)
 
