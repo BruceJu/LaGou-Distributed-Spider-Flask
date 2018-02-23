@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Scrapy settings for LaGou project
+# Scrapy settings for LaGouSpiderProject project
 #
 # For simplicity, this file contains only settings considered important or
 # commonly used. You can find more settings consulting the documentation:
@@ -9,14 +9,14 @@
 #     https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 
-BOT_NAME = 'LaGou'
+BOT_NAME = 'LaGouSpiderProject'
 
-SPIDER_MODULES = ['LaGou.spiders']
-NEWSPIDER_MODULE = 'LaGou.spiders'
+SPIDER_MODULES = ['LaGouSpiderProject.spiders']
+NEWSPIDER_MODULE = 'LaGouSpiderProject.spiders'
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-#USER_AGENT = 'LaGou (+http://www.yourdomain.com)'
+#USER_AGENT = 'LaGouSpiderProject (+http://www.yourdomain.com)'
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
@@ -47,13 +47,13 @@ ROBOTSTXT_OBEY = True
 # Enable or disable spider middlewares
 # See https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 #SPIDER_MIDDLEWARES = {
-#    'LaGou.middlewares.LagouSpiderMiddleware': 543,
+#    'LaGouSpiderProject.middlewares.LagouspiderprojectSpiderMiddleware': 543,
 #}
 
 # Enable or disable downloader middlewares
 # See https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
 #DOWNLOADER_MIDDLEWARES = {
-#    'LaGou.middlewares.LagouDownloaderMiddleware': 543,
+#    'LaGouSpiderProject.middlewares.LagouspiderprojectDownloaderMiddleware': 543,
 #}
 
 # Enable or disable extensions
@@ -65,7 +65,7 @@ ROBOTSTXT_OBEY = True
 # Configure item pipelines
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 #ITEM_PIPELINES = {
-#    'LaGou.pipelines.LagouPipeline': 300,
+#    'LaGouSpiderProject.pipelines.LagouspiderprojectPipeline': 300,
 #}
 
 # Enable and configure the AutoThrottle extension (disabled by default)

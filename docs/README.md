@@ -97,4 +97,95 @@
   最近接触了一个非常不错的文档在线生成工具，[docsify](https://docsify.js.org/#/),这个工具非常的不错，使用GitHubPage可以直接完成部署的工作，非常方便，vue风格的界面非常美观
   对于我这种经常写文档的同学来说，简直是天大的福音。我的这个项目，会提供一份说明文档。就使用这个 [docsify](https://docsify.js.org/#/)来实现，
   最后会呈现在[LaGou-Distributed-Spider-Flask项目说明文档](https://bruceju.github.io/LaGou-Distributed-Spider-Flask/)
+   * Python 版本；Python 2.7
+   * Scrapy 版本: Scrapy 1.5.0
+   * Redis 系统版本： Windows 64bit  Redis-x64-3.2.100
+
+## 开始
+
+### 创建爬虫
+
+ 使用`Scrapy`创建一个项目并进行爬虫编译 ，使用的命令是 
+ 
+ ```Scrapy
+scrapy startproject <项目名>
+scrapy genspider <爬虫名字> <允许访问的主机地址>
+```
+
+### 创建Flask
+
+ 这个没有什么太特别的地方
+ 
+ ```python
+# coding:utf8
+
+from flask import Flask
+
+import WebConfig
+
+app = Flask(__name__)
+
+app.config.from_object(WebConfig)
+
+
+@app.route('/')
+def index():
+    return 'hello Spider'
+
+
+if __name__ == '__main__':
+    app.run()
+
+```
+
+### 构建命令行操作
+
+> 为了能在cmd/shell中控制WebServer和Spider，需要设计几个操作命令，使用的是`flask_script`
+ * 提供以下几个命令
+   * db init (数据库初始化)
+   * db add admin -a <帐户名> - p <密码> 
+       * 用于向数据库种添加Admin，用于登录WebServer
+       * 需要使用者 在命令行中进行输入，并加密储存
+   * runserver -host <帐户名> -port <密码> (启动WebServer)
+       * 接受用户输入的 host 和 port 进行host和port设置
+       * 默认是在 host=127.0.0.1 port = 5000 下运行
+   * runspider -debug <是否是调试模式> (启动Spider)
+       * 模式模式下，会自动将爬取的数据输出到 data.json文件中 
+       
+ * 由于进行到此时，还没有进行db相关操作，所有先实现  `runserver`和 `runspider`的俩个部分的逻辑，
+ * 这里要注意项目的目录结构，否则会出现问题，可以参考d代码中的目录结构
+ * 在根目录创建 一个 `Manager.py`这样的一个文件用于命令的管理 部分代码如下
+
+```python
+# coding:utf8
+
+from flask_script import Manager
+from scrapy import cmdline
+from LaGouSpiderProject.WebServer.WebServer import app
+
+manager = Manager(app=app)
+
+
+@manager.option('-host', '--host', dest='host', help='run server host', default='127.0.0.1')
+@manager.option('-port', '--port', dest='port', help='run server port', default=5000)
+def runserver(host, port):
+    app.run(host=host, port=port)
+
+
+@manager.option('-debug', '--debug', dest='debug', help='is debug ??', default=1)
+def runspider(debug):
+    if debug == 0:
+        cmdline.execute('scrapy crawl LGSpider -o data.json -t json'.split())
+    else:
+        cmdline.execute('scrapy crawl LGSpider'.split())
+
+
+if __name__ == '__main__':
+    manager.run()
+```
+   
+    
+   
+      
+ 
 

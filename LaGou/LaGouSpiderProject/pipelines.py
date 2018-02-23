@@ -6,6 +6,6 @@
 # See: https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 
 
-class LagouPipeline(object):
+class LagouspiderprojectPipeline(object):
     def process_item(self, item, spider):
         return item
