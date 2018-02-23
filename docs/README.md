@@ -95,5 +95,6 @@
  
  ### 补充说明
   最近接触了一个非常不错的文档在线生成工具，[docsify](https://docsify.js.org/#/),这个工具非常的不错，使用GitHubPage可以直接完成部署的工作，非常方便，vue风格的界面非常美观
-  对于我这种经常写文档的同学来说，简直是天大的福音。我的这个项目，会提供一份说明文档。就使用这个 [docsify](https://docsify.js.org/#/)来实现
+  对于我这种经常写文档的同学来说，简直是天大的福音。我的这个项目，会提供一份说明文档。就使用这个 [docsify](https://docsify.js.org/#/)来实现，
+  最后会呈现在[LaGou-Distributed-Spider-Flask项目说明文档](https://bruceju.github.io/LaGou-Distributed-Spider-Flask/)
 
