@@ -72,6 +72,30 @@
 错的选择，但是对于个人来说，Flask是个不二的选择。
 </div>
 
+> - [x] 支持分布式采集
+
+*
+> - [x] SemanticUi+Flask数据可视化
+
+*
+> - [x] 提供登录权限认证功能
+
+*
+> - [x] 支持flask_script 命令管理
+
+*
+> - [x] 支持flask_sqlalchemy数据库orm映射
+
+*
+> - [x] 支持动态抓取
+
+*
+>- [x] 支持异常状态收集，与重试
+
+*
+>- [x] 支持运行状态的邮件通知
+
+
 
 ## 项目结构
 
@@ -277,7 +301,7 @@ class Admin(db.Model):
 * 这个是记录迁移数据库的版本西信息的不要删除，如下图
 * 数据库中应该有俩个表，如下图
 <div class="div-border-image">
-![001](https://thumbnail0.baidupcs.com/thumbnail/ab3a0cdb0e98edfe13edafc133ba6bcd?fid=3180846231-250528-830986105675917&time=1519376400&rt=sh&sign=FDTAER-DCb740ccc5511e5e8fedcff06b081203-bZSIo57KKQvX%2BlGtiFemX49nDxg%3D&expires=8h&chkv=0&chkbd=0&chkpc=&dp-logid=1246468171419657629&dp-callid=0&size=c710_u400&quality=100)
+![001](https://thumbnail0.baidupcs.com/thumbnail/ab3a0cdb0e98edfe13edafc133ba6bcd?fid=3180846231-250528-830986105675917&time=1519455600&rt=sh&sign=FDTAER-DCb740ccc5511e5e8fedcff06b081203-wmKXLoAE%2F%2BV1pxikmhCDvhqeFrA%3D&expires=8h&chkv=0&chkbd=0&chkpc=&dp-logid=1267063311391768909&dp-callid=0&size=c710_u400&quality=100&vuk=-&ft=video)
 </div>
 * 部分代码如下
 
@@ -342,14 +366,23 @@ def create_admin(account, pwd):
 * 效果如下
 
 <div class="div-border-image">
-![avatar](https://thumbnail0.baidupcs.com/thumbnail/1583eaf9cd2b888a8c904d4f32b0e255?fid=3180846231-250528-546478717734915&time=1519390800&rt=sh&sign=FDTAER-DCb740ccc5511e5e8fedcff06b081203-Zlr4y2BsTIl8frUCOt0bQWnNdiA%3D&expires=8h&chkv=0&chkbd=0&chkpc=&dp-logid=1250189040838882703&dp-callid=0&size=c710_u400&quality=100)
+![avatar](https://thumbnail0.baidupcs.com/thumbnail/1583eaf9cd2b888a8c904d4f32b0e255?fid=3180846231-250528-546478717734915&time=1519455600&rt=sh&sign=FDTAER-DCb740ccc5511e5e8fedcff06b081203-%2ByaR3iELK9Z0347NugMSOAHQIF0%3D&expires=8h&chkv=0&chkbd=0&chkpc=&dp-logid=1267047199009381481&dp-callid=0&size=c710_u400&quality=100&vuk=-&ft=video)
 </div>
  
 
 
+### 登录认证
 
+> 现在数据库有了，并且也可以用命令生成Admin角色了，那么就下了可以开始构建登录认证功能了
 
+* 登录认证功能设计思路
+  * SemanticUi构建前端页面
+  * 使用蓝图构建项目结构
+  * flask_wtf设计登录表单
+  * 提供登录验证的装饰器
+  * 提供消息闪现支持
 
+[管理员登录认证模块构建详解](/login)
 
 
 

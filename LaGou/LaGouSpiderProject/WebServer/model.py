@@ -1,7 +1,9 @@
 # coding:utf8
 
 from datetime import datetime
-from werkzeug.security import generate_password_hash
+
+from werkzeug.security import generate_password_hash, check_password_hash
+
 from exts import db
 
 
@@ -14,6 +16,9 @@ class Admin(db.Model):
     def save(self):
         db.session.add(self)
         db.session.commit()
+
+    def check_pwd(self, password):
+        return check_password_hash(self.pwd, password)
 
     def __repr__(self):
         return '<Admin %r>' % self.account
