@@ -379,12 +379,73 @@ def create_admin(account, pwd):
   * SemanticUi构建前端页面
   * 使用蓝图构建项目结构
   * flask_wtf设计登录表单
-  * 提供登录验证的装饰器
+  * 提供输入字段验证
   * 提供消息闪现支持
+  * 提供基于登录的访问控制的装饰器
+  
+```python
+# coding:utf8
+from functools import wraps
 
-[管理员登录认证模块构建详解](/login)
+from flask import render_template, redirect, url_for, flash, session, request
+
+from forms import LoginForm
+from . import admin
+from ..model import Admin
 
 
+def admin_logon_request(function):
+    @wraps(function)
+    def decorated_function(*args, **kwargs):
+        if 'admin' not in session:
+            return redirect(url_for('admin.login' or request.url))
+        return function(*args, **kwargs)
+
+    return decorated_function
+
+
+@admin.route('/login', methods=['GET', 'POST'])
+def login():
+    loginForm = LoginForm()
+    if loginForm.validate_on_submit():
+        data = loginForm.data
+        record = Admin.query.filter_by(account=data['account']).first()
+        if not record.check_pwd(data['pwd']):
+            flash('密码错误')
+            return redirect(url_for('admin.login'))
+        else:
+            # 构造session
+            session['admin'] = data['account']
+            print(session)
+            return redirect(url_for('admin.index' or request.args["next"]))
+
+    return render_template('admin/login.html', form=loginForm)
+
+
+@admin.route('/logout')
+
+def logout():
+    session['admin'].pop()
+    return redirect(url_for('admin.login'))
+
+
+@admin.route('/')
+@admin_logon_request
+def index():
+    return 'hello'
+```  
+
+* 效果1
+<div class="div-border-image">
+![001](https://thumbnail0.baidupcs.com/thumbnail/1829a9ee777cf509df4fa8f72ab839fc?fid=3180846231-250528-620318043291499&time=1519459200&rt=sh&sign=FDTAER-DCb740ccc5511e5e8fedcff06b081203-oVO2TA0bjH3SaTOlLABB%2B%2FaMc5Y%3D&expires=8h&chkv=0&chkbd=0&chkpc=&dp-logid=1268135052722737272&dp-callid=0&size=c710_u400&quality=100&vuk=-&ft=video)
+</div>
+* 效果2
+<div class="div-border-image">
+![001](https://thumbnail0.baidupcs.com/thumbnail/781e591ebce098e31ad671db4bda5ddf?fid=3180846231-250528-908421849970235&time=1519459200&rt=sh&sign=FDTAER-DCb740ccc5511e5e8fedcff06b081203-%2BJa9lAwO718%2BTZRecIbo0Bri8mY%3D&expires=8h&chkv=0&chkbd=0&chkpc=&dp-logid=1268108100717009770&dp-callid=0&size=c710_u400&quality=100&vuk=-&ft=video)
+</div>
+
+
+### 分布式爬虫构建
 
    
     
