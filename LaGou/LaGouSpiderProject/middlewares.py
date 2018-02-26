@@ -5,7 +5,29 @@
 # See documentation in:
 # https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 
+from fake_useragent import UserAgent
 from scrapy import signals
+
+
+class RandomUserAgentMiddlware(object):
+    # 随机更换user-agent
+    def __init__(self, crawler):
+        super(RandomUserAgentMiddlware, self).__init__()
+        self.ua = UserAgent()
+        self.host = u'http://{0}:8000/?types=0&count=60&country=国内'
+        self.ua_type = crawler.settings.get("RANDOM_UA_TYPE", "random")
+
+    @classmethod
+    def from_crawler(cls, crawler):
+        return cls(crawler)
+
+    def process_request(self, request, spider):
+        # 当每个request通过下载中间件时，该方法被调用。
+        def get_ua():
+            return getattr(self.ua, self.ua_type)
+
+        request.headers.setdefault('User-Agent', get_ua())
+
 
 
 class LagouspiderprojectSpiderMiddleware(object):
@@ -101,3 +123,28 @@ class LagouspiderprojectDownloaderMiddleware(object):
 
     def spider_opened(self, spider):
         spider.logger.info('Spider opened: %s' % spider.name)
+
+
+from scrapy.http import HtmlResponse
+
+
+class DynamicCrawlMiddleware(object):
+
+    def __init__(self, crawler):
+        super(DynamicCrawlMiddleware, self).__init__()
+
+        self.isDynamic = crawler.settings.getbool('DYNAMIC_CRAWL', False)
+
+    @classmethod
+    def from_crawler(cls, crawler):
+        return cls(crawler)
+
+    def process_request(self, request, spider):
+        if self.isDynamic:
+            spider.driver.capabilities['phantomjs.page.settings.userAgent'] = UserAgent()
+            spider.driver.capabilities['phantomjs.page.customHeaders.User-Agent'] = UserAgent()
+            spider.driver.get(request.url)
+            import time
+            time.sleep(3)
+            spider.logger.info("load url for WebKit:{0}".format(spider.driver.current_url))
+            return HtmlResponse(url=spider.driver.current_url, body=spider.driver.page_source, encoding="utf-8",request=request)

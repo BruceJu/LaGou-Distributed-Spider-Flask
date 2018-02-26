@@ -104,3 +104,11 @@ ENV/
 
 # flask_migrate
 LaGou/migrations/
+LaGou/LaGouSpiderProject/WebKit/phantomjs-2.1.1-windows/bin/phantomjs.exe
+*.exe
+LaGou/LaGouSpiderProject/WebKit/phantomjs-2.1.1-windows/bin/phantomjs.exe
+LaGou/LaGouSpiderProject/WebKit/phantomjs-2.1.1-windows/LICENSE.BSD
+LaGou/LaGouSpiderProject/WebKit/phantomjs-2.1.1-windows/third-party.txt
+LaGou/LaGouSpiderProject/WebKit/phantomjs-2.1.1-windows/bin/phantomjs.exe
+LaGou/LaGouSpiderProject/WebKit/phantomjs-2.1.1-windows/LICENSE.BSD
+LaGou/LaGouSpiderProject/WebKit/phantomjs-2.1.1-windows/third-party.txt
