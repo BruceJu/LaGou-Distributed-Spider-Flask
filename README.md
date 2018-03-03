@@ -7,6 +7,16 @@
 
 ## 成果展示
 
+> 爬到的数据
+
+![image][https://github.com/BruceJu/LaGou-Distributed-Spider-Flask/blob/master/image/mysql_data.jpg]
+
+> 数据分析
+
+![image][https://github.com/BruceJu/LaGou-Distributed-Spider-Flask/blob/master/image/postion.png]
+
+
+
 
 
 
