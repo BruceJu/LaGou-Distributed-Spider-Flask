@@ -7,13 +7,12 @@
 
 ## 成果展示
 
-> 爬到的数据
 
-![image][https://github.com/BruceJu/LaGou-Distributed-Spider-Flask/blob/master/image/mysql_data.jpg]
+> 数据爬取
+![spider_data](http://ip.suiyiyun.cn/598617/lagou_spider_image/mysql_data.jpg)
 
 > 数据分析
-
-![image][https://github.com/BruceJu/LaGou-Distributed-Spider-Flask/blob/master/image/postion.png]
+![sss](http://ip.suiyiyun.cn/598617/lagou_spider_image/postion.png)
 
 
 
