@@ -803,7 +803,13 @@ class RandomUserAgentMiddlware(object):
 
 ### 爬虫完成
 
+## 数据分析
 
+* 使用`jupter`进行数据分析
+* 连接数据库，获取数据
+* 运用 `list`,`set`,`dict`,`re`进行数据的清洗
+* 选择不同的数据维度，进行数据分析
+* 使用`highcharts`进行数据可视化
 
    
     

@@ -9,7 +9,7 @@ import scrapy
 from scrapy.loader import ItemLoader
 from scrapy.loader.processors import MapCompose, TakeFirst, Join
 from w3lib.html import remove_tags
-from LaGou.LaGouSpiderProject.Util import common
+from Util import common
 
 
 def remove_splash(value):

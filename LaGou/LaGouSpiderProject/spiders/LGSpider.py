@@ -2,15 +2,16 @@
 import json
 import time
 from datetime import datetime
+from scrapy_redis.spiders import RedisSpider
 
 import scrapy
 from scrapy.exceptions import CloseSpider, IgnoreRequest
 from scrapy.http import FormRequest,Request
 
-from LaGou.LaGouSpiderProject.items import LagouJobItemLoader, LagouJobItem
+from ..items import LagouJobItem,LagouJobItemLoader
 
 
-class LgspiderSpider(scrapy.Spider):
+class LgspiderSpider(RedisSpider):
     name = 'LGSpider'
     allowed_domains = ['lagou.com']
     start_urls = [
@@ -65,7 +66,7 @@ class LgspiderSpider(scrapy.Spider):
 
     def start_requests(self):
         for page_url in self.start_urls:
-            formdata = {"first": "true", "pn": "1", "kd": "英语老师"}
+            formdata = {"first": "true", "pn": "1", "kd": "Python爬虫"}
             return [FormRequest(url=page_url, headers=self.lagou_list_page_headers
                                 , formdata=formdata, callback=self.parse)]
 

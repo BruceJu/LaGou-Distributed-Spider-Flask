@@ -37,7 +37,6 @@ def login():
 
 
 @admin.route('/logout')
-
 def logout():
     session['admin'].pop()
     return redirect(url_for('admin.login'))
@@ -46,4 +45,32 @@ def logout():
 @admin.route('/')
 @admin_logon_request
 def index():
-    return 'hello'
+    return render_template('admin/index.html')
+
+
+from flask import Response
+import json
+@admin_logon_request
+@admin.route('/echarts')
+def echarts():
+    datas = {
+        "data": [
+            {"name": "allpe", "num": 100},
+            {"name": "peach", "num": 123},
+            {"name": "Pear", "num": 234},
+            {"name": "avocado", "num": 20},
+            {"name": "cantaloupe", "num": 1},
+            {"name": "Banana", "num": 77},
+            {"name": "Grape", "num": 43},
+            {"name": "apricot", "num": 0}
+        ]
+    }
+    content = json.dumps(datas)
+    resp = Response_headers(content)
+    return resp
+
+
+def Response_headers(content):
+    resp = Response(content)
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
