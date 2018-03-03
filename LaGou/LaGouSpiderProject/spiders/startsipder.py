@@ -4,5 +4,5 @@ from scrapy import cmdline
 
 
 if __name__ == '__main__':
-    cmdline.execute('scrapy crawl LGSpider -o data.json -t json'.split())
+    cmdline.execute('scrapy crawl LGSpider'.split())
 

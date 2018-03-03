@@ -449,39 +449,6 @@ scrapy startproject <项目名>
 scrapy genspider <爬虫名字> <允许访问的主机地址>
 ```
 
-### 防Ban操作
-
-#### 添加随机UA操作
-
-> useragent ，request_header这是网页对于访问者的验证，在爬虫中需要设置UserAgent，否则部分网络将无法爬取
-
-* 使用第三方随机UA的库
-* 添加中间件，进行UA的随机切换
-* 代码如下
-
-```python
-# -*- coding: utf-8 -*-
-from fake_useragent import UserAgent
-
-class RandomUserAgentMiddlware(object):
-    # 随机更换user-agent
-    def __init__(self, crawler):
-        super(RandomUserAgentMiddlware, self).__init__()
-        self.ua = UserAgent()
-        self.ua_type = crawler.settings.get("RANDOM_UA_TYPE", "random")
-
-    @classmethod
-    def from_crawler(cls, crawler):
-        return cls(crawler)
-
-    def process_request(self, request, spider):
-        # 当每个request通过下载中间件时，该方法被调用。
-        def get_ua():
-            return getattr(self.ua, self.ua_type)
-        request.headers.setdefault('User-Agent', get_ua())
-
-```
-
 ### 添加针对JS的抓取支持
 
 > 由于拉钩网的页面都是是用js来加载数据的，所有这里需要使用一种方式来处理JS，其实方式有很多，这里我采用的是``selenium``+``PhantomJS``的方式
@@ -775,6 +742,67 @@ class LagouJobItem(scrapy.Item):
     }
 ]
 ```
+
+### 防Ban操作
+> 如果在不采取防Ban操作的情况下，那么会触发lagou网的反爬机制，会强制302到登录页面，所以有必要采取一下相关操作
+
+
+#### 下载延迟
+这里采用scrapy 的自动下载延迟扩展
+
+```python
+AUTOTHROTTLE_ENABLED = True
+AUTOTHROTTLE_START_DELAY = 10
+AUTOTHROTTLE_MAX_DELAY = 10
+AUTOTHROTTLE_DEBUG = True
+```
+#### 使用IP代理
+
+* 自己维护IP池
+  * 这样的方式不推荐。因为这样的方式所获取的IP质量不高。
+* 设置代理IP
+  * 花钱买个代理IP吧这样会好一下
+
+#### 添加随机UA操作
+
+> useragent ，request_header这是网页对于访问者的验证，在爬虫中需要设置UserAgent，否则部分网络将无法爬取
+
+* 使用第三方随机UA的库
+* 添加中间件，进行UA的随机切换
+* 代码如下
+
+```python
+# -*- coding: utf-8 -*-
+from fake_useragent import UserAgent
+
+class RandomUserAgentMiddlware(object):
+    # 随机更换user-agent
+    def __init__(self, crawler):
+        super(RandomUserAgentMiddlware, self).__init__()
+        self.ua = UserAgent()
+        self.ua_type = crawler.settings.get("RANDOM_UA_TYPE", "random")
+
+    @classmethod
+    def from_crawler(cls, crawler):
+        return cls(crawler)
+
+    def process_request(self, request, spider):
+        # 当每个request通过下载中间件时，该方法被调用。
+        def get_ua():
+            return getattr(self.ua, self.ua_type)
+        request.headers.setdefault('User-Agent', get_ua())
+
+```
+
+
+### 数据入库
+
+* 用Flask的orm框架来生成对用的数据库，来存放爬虫爬到的数据
+* 涉及的字段尽量和items中一致。
+* 并且需要考虑入库操作的异步的模式
+
+### 爬虫完成
+
 
 
    

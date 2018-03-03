@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 
 
-import hashlib
+from werkzeug.security import generate_password_hash
 import json
 import random
 import smtplib
 from email.header import Header
 from email.mime.text import MIMEText
 import requests
-
-# -*- coding: utf-8 -*-
 import hashlib
 import re
 import datetime
@@ -28,11 +26,9 @@ def extract_num(text):
 def get_md5(urls):
     if type(urls) is list:
         url = urls.pop(0)
-    if isinstance(url, unicode):
-        url = url.encode('utf-8')
-    m = hashlib.md5(url)
-    m.update(url)
-    return m.hexdigest()
+        if isinstance(url, unicode):
+            url = url.encode('utf-8')
+            return generate_password_hash(url)
 
 
 def QueryRandomIP(address):
@@ -78,15 +74,17 @@ def format_time(text):
         return (datetime.datetime.now() - datetime.timedelta(days=extract_num(text))).strftime("%Y-%m-%d %H:%M")
     elif '周'in text:
         return (datetime.datetime.now() - datetime.timedelta(weeks=extract_num(text))).strftime("%Y-%m-%d %H:%M")
+    elif re.compile(r'[0-9]{4}[-][0-9]{1,2}[-][0-9]{1,2}').findall(text):
+        str_time= re.compile(r'[0-9]{4}[-][0-9]{1,2}[-][0-9]{1,2}').findall(text).pop()
+        return datetime.datetime.strptime(str_time,'%Y-%m-%d')
     else:
-        str_time= re.compile('[0-9]{4}[-][0-9]{1,2}[-][0-9]{1,2}[0-9]{1,2}[:][0-9]{1,2}').findall(text).pop()
-        return datetime.datetime.strptime(str_time,'%Y-%m-%d%H:%M')
+        return datetime.datetime.now().strftime('%Y-%m-%d')
 
 if __name__ == '__main__':
     print format_time('1天前  发布于拉勾网')
     print format_time('1小时之前')
     print format_time('2天之前')
     print format_time('5周之前')
-    print format_time('2017-10-0513:55发表了文章')
+    print format_time('13:55发表了文章')
 
 
