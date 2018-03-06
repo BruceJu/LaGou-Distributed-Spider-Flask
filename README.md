@@ -11,13 +11,13 @@
 > 身份验证
 
 <div style="fload:left,margin:30px,display:inline">
-   <img src="https://s1.ax1x.com/2018/03/06/9gZh3F.png" width="600" />
+   <img src="https://s1.ax1x.com/2018/03/06/9gZh3F.png" width="800" />
 </div>
 
 
 > 分析页
 <div style="fload:left,margin:30px,display:inline">
-   <img src="https://s1.ax1x.com/2018/03/06/9gZTBR.png" width="600" />
+   <img src="https://s1.ax1x.com/2018/03/06/9gZTBR.png" width="800" />
 </div>
 
 
@@ -26,19 +26,19 @@
 > 职位地区数量
 
 <div style="fload:left,margin:30px,display:inline">
-   <img src="https://s1.ax1x.com/2018/03/06/9gZbAx.png" width="600" />
+   <img src="https://s1.ax1x.com/2018/03/06/9gZbAx.png" width="800" />
 </div>
 
 > 学历要求占比
 
 <div style="fload:left,margin:30px,display:inline">
-   <img src="https://s1.ax1x.com/2018/03/06/9geQU0.png" width="600" />
+   <img src="https://s1.ax1x.com/2018/03/06/9geQU0.png" width="800" />
 </div>
 
 > 职位描述词云
 
 <div style="fload:left,margin:30px,display:inline">
-   <img src="https://s1.ax1x.com/2018/03/06/9ge3CT.png" width="600" height="400" />
+   <img src="https://s1.ax1x.com/2018/03/06/9ge3CT.png" width="800" height="400" />
 </div>
 
 ## 命令脚本設計
