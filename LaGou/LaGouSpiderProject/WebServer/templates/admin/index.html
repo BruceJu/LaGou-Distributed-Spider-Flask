@@ -1,120 +1,165 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>爬虫数据分析</title>
-    <!-- 引入 echarts.js -->
-    <script type="text/javascript" src="http://echarts.baidu.com/dist/echarts.js"></script>
-    <!-- 引入jquery.js -->
-    <script type="text/javascript" src="http://cdn.static.runoob.com/libs/jquery/1.10.2/jquery.min.js"></script>
+    <!-- Standard Meta -->
+    <meta charset="utf-8"/>
+    <!-- Site Properities -->
+    <meta name="generator" content="DocPad v6.78.1"/>
+    <title>招聘崗位分析</title>
 
-</head>
-<body>
+    <meta name="description" content="Examples of using Semantic UI"/>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='dist/components/reset.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='dist/components/card.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='dist/components/site.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='dist/components/container.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='dist/components/grid.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='dist/components/segment.css') }}">
 
-<!-- 为ECharts准备一个具备大小（宽高）的Dom -->
-<div id="main" style="width: 900px;height:500px;"></div>
+    <script src="https://img.hcharts.cn/jquery/jquery-1.8.3.min.js"></script>
+    <script src="https://img.hcharts.cn/highcharts/highcharts.js"></script>
+    <script src="https://img.hcharts.cn/highcharts/highcharts-3d.js"></script>
+    <script src="https://img.hcharts.cn/highcharts/modules/exporting.js"></script>
+    <script src="https://img.hcharts.cn/highcharts-plugins/highcharts-zh_CN.js"></script>
+{#    工作地区分布的script#}
+    <script>
+        var oChart_Area = null;
+        var oChart_Degree_need = null;
 
-<script type="text/javascript">
-    var a = echarts;
-    var myChart = a.init(document.getElementById('main'));
-    // 显示标题，图例和空的坐标轴
-    myChart.setOption({
+        var Options_Area = {
+            chart: {
+                renderTo: 'job_count',
+                type: 'column',
+                options3d: {
+                    enabled: true,
+                    alpha: 25,
+                    beta: 15,
+                    depth: 55,
+                    viewDistance: 25
+                }
+            },
+            title: {
+                text: '杭州Python爬虫招聘职位与地区数量'
+            },
+            subtitle: {
+                text: '地区职位数量'
+            },
+            plotOptions: {
+                column: {
+                    depth: 25
+                }
+            },
+            series: []
+        };
+        var Options_Degree_need = {
+        chart: {
+            renderTo: 'job_degree_need',
+            type: 'pie',
+            options3d: {
+                enabled: true,
+                alpha: 45,
+                beta: 0
+            }
+        },
         title: {
-            text: '爬虫今日抓取数据图'
+            text: '杭州Python爬虫学历要求占比'
         },
         tooltip: {
-            trigger: 'axis'
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
         },
-        legend: {
-            data: ['今日数据']
-        },
-        toolbox: {
-            show: true,
-            feature: {
-                mark: {show: true},
-                dataView: {show: true, readOnly: false},
-                magicType: {show: true, type: ['line', 'bar']},
-                // restore : {show: true},
-                // saveAsImage : {show: true}
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                depth: 55,
+                dataLabels: {
+                    enabled: true,
+                    format: '{point.name}'
+                }
             }
         },
-        calculable: true,
+        series: []
+        };
 
-        xAxis: [
-            {
-                type: 'category',
-                boundaryGap: false,
-                data: []
-            }
-        ],
-        yAxis: [
-            {
-                type: 'value',
-                axisLabel: {
-                    formatter: '{value}'
-                }
-            }
-        ],
-        series: [
-            {
-                name: '最多数量',
-                type: 'line',
-                data: [],
-                markPoint: {
-                    data: [
-                        {type: 'max', name: '最大值'},
-                        {type: 'min', name: '最小值'}
-                    ]
-                },
-                markLine: {
-                    data: [
-                        {type: 'average', name: '平均值'}
-                    ]
-                }
-            },]
-    });
-    myChart.showLoading();    //数据加载完之前先显示一段简单的loading动画
-    var names = [];    //名称数组（实际用来盛放X轴坐标值）
-    var nums = [];    //数量数组（实际用来盛放Y坐标值）
-    $.ajax({
-        type: "get",
-//       async : true,            //异步请求（同步请求将会锁住浏览器，用户其他操作必须等待请求完成才可以执行）
-        url: "http://127.0.0.1:5000/echarts",    //请求发送到Servlet处
-//       data : {},
-        dataType: "json",        //返回数据形式为json
-        success: function (result) {
-            //请求成功时执行该函数内容，result即为服务器返回的json对象
-            if (result) {
-//              alert(result["data"]);
-                for (var i = 0; i < result["data"].length; i++) {
-//                      alert(result["data"][i]["name"]);
-                    names.push(result["data"][i]["name"]);    //挨个取出名称并填入类别数组
-                }
-                for (var i = 0; i < result["data"].length; i++) {
-//                      alert(result["data"][i]["num"]);
-                    nums.push(result["data"][i]["num"]);    //挨个取出数量并填入销量数组
-                }
-                myChart.hideLoading();    //隐藏加载动画
-                myChart.setOption({        //加载数据图表
-                    xAxis: {
-                        data: names
-                    },
-                    series: [{
-                        // 根据名字对应到相应的系列
-                        name: '数量',
-                        data: nums
-                    }]
-                });
 
-            }
+        $(document).ready(function () {
+           oChart_Area = new Highcharts.Chart(Options_Area);
+           oChart_Degree_need = new Highcharts.Chart(Options_Degree_need);
+            //异步动态加载数据列
+            LoadSerie_oChart_Area_Ajax()
+            LoadSerie_oChart_Degree_need_Ajax()
+        });
 
-        },
-        error: function (errorMsg) {
-            //请求失败时执行该函数
-            alert("图表请求数据失败!");
-            myChart.hideLoading();
+        //异步读取数据并加载到图表
+
+        function LoadSerie_oChart_Area_Ajax() {
+            oChart_Area.showLoading();
+            $.ajax({
+                url: {{ url_for('admin.job_area_json') }},
+                type: 'POST',
+                dataType: 'json',
+                contentType: "application/x-www-form-urlencoded; charset=utf-8",
+                success: function (ResponseData) {
+                    for(var i=0;i<ResponseData.length;i++){
+                        var DataSeries = {
+                                    name: ResponseData[i].name,
+                                    data: ResponseData[i].data
+                        };
+                        oChart_Area.addSeries(DataSeries);
+                    }
+                }
+            });
+            oChart_Area.hideLoading();
         }
-    })
-</script>
+
+        function LoadSerie_oChart_Degree_need_Ajax() {
+            oChart_Degree_need.showLoading();
+            $.ajax({
+                url: {{ url_for('admin.degree_need_json') }},
+                type: 'POST',
+                dataType: 'json',
+                contentType: "application/x-www-form-urlencoded; charset=utf-8",
+                success: function (ResponseData) {
+                    oChart_Degree_need.addSeries(ResponseData)
+                }
+            });
+            oChart_Degree_need.hideLoading();
+        }
+    </script>
+
+
+<body>
+
+<div class="ui three column centered grid">
+    <div class="column">
+
+
+               <img class="ui centered  image" src="{{ url_for('static',filename='dist/image/job_des.png')}}">
+
+
+
+    </div>
+    <div class=" three column centered row">
+        <div class="column">
+            <div class="ui segment">
+                <div class="content">
+                    <div id="job_degree_need"></div>
+
+                </div>
+            </div>
+        </div>
+        <div class="column">
+            <div class="ui segment">
+                <div class="content">
+                    <div id="job_count"></div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 </body>
+
+
 </html>
